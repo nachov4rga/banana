@@ -27,6 +27,37 @@ const setupCursorGlow = () => {
     });
 };
 
+const setupLoadUpAnimations = () => {
+    const loadTargets = [
+        ['.nav', '0s'],
+        ['.hero-content', '0.08s'],
+        ['.hero-visual', '0.16s'],
+        ['.trust-strip', '0.24s'],
+    ];
+
+    loadTargets.forEach(([selector, delay]) => {
+        const element = document.querySelector(selector);
+
+        if (!element) {
+            return;
+        }
+
+        element.classList.add('load-up');
+        element.style.setProperty('--load-delay', delay);
+    });
+
+    if (prefersReducedMotion.matches) {
+        document.body.classList.add('page-ready');
+        return;
+    }
+
+    window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+            document.body.classList.add('page-ready');
+        });
+    });
+};
+
 const setupProjectTilt = () => {
     const cards = document.querySelectorAll('[data-tilt]');
 
@@ -64,7 +95,7 @@ const setupProjectTilt = () => {
 
 const setupRevealAnimations = () => {
     const targets = document.querySelectorAll(
-        '.services, .projects, .process, .about, .contact, .trust-item, .service-card, .project-card, .process-step, .hero-stat'
+        '.services, .projects, .process, .about, .contact, .trust-item, .service-card, .project-card, .process-step, .hero-stat, .hero-skill-ribbon, .experience-summary, .experience-item, .about-panel'
     );
 
     if (!targets.length) {
@@ -205,8 +236,6 @@ const setupActiveNav = () => {
 
 const setupNavBackground = () => {
     const nav = document.querySelector('.nav');
-    const heroContent = document.querySelector('.hero-content');
-    const heroVisual = document.querySelector('.hero-visual');
 
     if (!nav) {
         return;
@@ -226,15 +255,6 @@ const setupNavBackground = () => {
         if (prefersReducedMotion.matches) {
             return;
         }
-
-        if (heroContent) {
-            heroContent.style.transform = `translateY(${scrolled * 0.08}px)`;
-            heroContent.style.opacity = String(clamp(1 - scrolled / 1200, 0, 1));
-        }
-
-        if (heroVisual) {
-            heroVisual.style.transform = `translateY(${scrolled * 0.12}px)`;
-        }
     };
 
     window.addEventListener('scroll', updateState, { passive: true });
@@ -250,6 +270,7 @@ const setupFooterYear = () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    setupLoadUpAnimations();
     setupCursorGlow();
     setupProjectTilt();
     setupRevealAnimations();
